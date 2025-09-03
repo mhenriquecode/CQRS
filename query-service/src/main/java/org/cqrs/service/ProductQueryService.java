@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.cqrs.dto.ProductEvent;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductQueryService {
@@ -16,6 +17,11 @@ public class ProductQueryService {
 
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    public Product findOne(long id){
+        Product existingProduct = productRepository.findById(id).get();
+        return existingProduct;
     }
 
     @KafkaListener(topics = "product-event-topic", groupId = "product-event-group")
