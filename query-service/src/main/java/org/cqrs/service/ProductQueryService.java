@@ -18,5 +18,22 @@ public class ProductQueryService {
         return productRepository.findAll();
     }
 
+    @KafkaListener(topics = "product-event-topic", groupId = "product-event-group")
+    public void processProductEvents(ProductEvent productEvent){
+        Product product = productEvent.getProduct();
+        if (productEvent.getEventType().equals("CreateProduct")){
+            productRepository.save(productEvent.getProduct());
+        }
+        if (productEvent.getEventType().equals("UpdateProduct")){
+            Product existingProduct = productRepository.findById(product.getId()).get();
+            existingProduct.setName(product.getName());
+            existingProduct.setDescription(product.getDescription());
+            existingProduct.setPrice(product.getPrice());
+            productRepository.save(existingProduct);
+        }
+        if (productEvent.getEventType().equals("DeleteProduct")) {
+            productRepository.deleteById(product.getId());
+        }
 
+    }
 }
