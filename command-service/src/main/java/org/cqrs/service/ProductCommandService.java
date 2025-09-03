@@ -34,4 +34,11 @@ public class ProductCommandService {
         kafkaTemplate.send("product-event-topic", event);
         return productDO;
     }
+
+    public void deleteProduct(long id) {
+        Product existingProduct = repository.findById(id).get();
+        repository.deleteById(id);
+        ProductEvent event = new ProductEvent("DeleteProduct", existingProduct);
+        kafkaTemplate.send("product-event-topic", event);
+    }
 }

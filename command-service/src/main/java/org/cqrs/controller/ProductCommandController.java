@@ -22,4 +22,9 @@ public class ProductCommandController {
         return productCommandService.updateProduct(id, productEvent);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteProduct(@PathVariable long id) {
+        productCommandService.deleteProduct(id);
+    }
+
 }
