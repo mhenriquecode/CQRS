@@ -23,4 +23,15 @@ public class ProductCommandService {
         return productDO;
     }
 
+    public Product updateProduct(long id, ProductEvent productEvent) {
+        Product existingProduct = repository.findById(id).get();
+        Product newProduct = productEvent.getProduct();
+        existingProduct.setName(newProduct.getName());
+        existingProduct.setDescription(newProduct.getDescription());
+        existingProduct.setPrice(newProduct.getPrice());
+        Product productDO = repository.save(existingProduct);
+        ProductEvent event = new ProductEvent("UpdateProduct", productDO);
+        kafkaTemplate.send("product-event-topic", event);
+        return productDO;
+    }
 }
